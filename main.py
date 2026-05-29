@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from workflow.orchestrator import Orchestrator
+from skills.chat import ChatSkill
 
 app = FastAPI(title="智估价 AI API", version="1.0.0")
 
@@ -40,6 +41,9 @@ async def health():
     return {"status": "ok"}
 
 
+chat_skill = ChatSkill()
+
+
 @app.post("/api/valuate")
 async def valuate(req: ValuateRequest):
     p = req.params
@@ -51,4 +55,14 @@ async def valuate(req: ValuateRequest):
         house_count=p.houseCount,
         query=req.query,
     )
+    return result
+
+
+class ChatRequest(BaseModel):
+    message: str
+
+
+@app.post("/api/chat")
+async def chat(req: ChatRequest):
+    result = await chat_skill.execute({"message": req.message})
     return result
