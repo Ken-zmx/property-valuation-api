@@ -94,7 +94,7 @@ class CommunityMatcher:
         # ── Level 2: 包含关系 ──
         for c in communities:
             if keyword in c["name"] or c["name"] in keyword:
-                return {"status": "fuzzy", "msg": f"猜您想搜：{c["name"]}", "community": c, "suggestion": c["name"]}
+                return {"status": "fuzzy", "msg": f"猜您想搜：{c['name']}", "community": c, "suggestion": c["name"]}
 
         # ── Level 3: Levenshtein 相似度 ──
         best_score = 0.0
