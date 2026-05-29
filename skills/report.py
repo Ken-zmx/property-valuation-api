@@ -49,7 +49,7 @@ class ReportSkill(BaseSkill):
             "reportDate": date_str,
             "purpose": "为房产交易提供价值参考依据",
             "subjectProperty": {
-                "name": keyword or "未知小区",
+                "name": valuation.get("detail", {}).get("name") if valuation.get("detail") else (keyword or "未知小区"),
                 "location": f"{city}{district}",
                 "area": f"{area}㎡",
                 "type": "住宅",
