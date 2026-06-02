@@ -43,18 +43,23 @@ class ChatSkill(BaseSkill):
         if not DEEPSEEK_API_KEY:
             raise ValueError("DEEPSEEK_API_KEY 未设置")
 
-        from openai import OpenAI
-        client = OpenAI(
-            api_key=DEEPSEEK_API_KEY,
-            base_url=DEEPSEEK_BASE_URL,
+        import httpx
+        response = httpx.post(
+            f"{DEEPSEEK_BASE_URL}/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": "deepseek-chat",
+                "messages": messages,
+                "temperature": 0.3,
+                "max_tokens": 1024,
+            },
+            timeout=30.0,
         )
-        response = client.chat.completions.create(
-            model="deepseek-chat",
-            messages=messages,
-            temperature=0.3,
-            max_tokens=1024,
-        )
-        return response.choices[0].message.content.strip()
+        response.raise_for_status()
+        return response.json()["choices"][0]["message"]["content"].strip()
 
     async def execute(self, params: dict) -> dict:
         user_message = params.get("message", "")
